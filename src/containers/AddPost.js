@@ -1,94 +1,61 @@
-import React from 'react';
-import { withRouter } from 'react-router';
-import { graphql, gql } from 'react-apollo';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 
-class CreatePost extends React.Component {
+import { addPost } from '../ducks';
+
+class AddPost extends Component {
   constructor(props) {
     super(props);
     autoBind(this);
+
     this.state = {
       title: '',
       image: '',
     }
   }
 
-  async handlePost() {
-    const { title, image } = this.state;
+  handleUpdateInput(e, field) {
+    const { value } = e.target;
 
-    const {
-      data: {
-        user: {
-          id: author = ''
-        } = {},
-      } = {},
-      history,
-      mutate,
-    } = this.props;
-
-    const story = await mutate({variables: {title, image, author}});
-
-    if (!story) {
-      return;
-    }
-
-    history.replace('/submit');
-    window.location.reload();
+    this.setState({
+      ...this.state,
+      [field]: value,
+    });
   }
 
-  render () {
-    const { data, history } = this.props;
-    const { title, image } = this.state;
+  handLoginUser() {
+    const { addPost } = this.props;
+    const { title, image } = this.state;
 
-    if (data.loading) {
-      return (<div>Loading</div>)
-    }
+    addPost({ title, image });
 
-    if (!data.user) {
-      history.replace('/submit');
-    }
+    this.setState({
+      title: '',
+      image: '',
+    })
+  }
+
+  render() {
+    const { title, image } = this.state;
 
     return (
       <div>
-        <div>
-          <input
-            value={title}
-            placeholder='Description'
-            onChange={(e) => this.setState({title: e.target.value})}
-          />
-          <input
-            value={image}
-            placeholder='Image Url'
-            onChange={(e) => this.setState({image: e.target.value})}
-          />
-          {image &&
-            <img src={image} alt='presentation' />
-          }
-          {title && image &&
-            <button onClick={this.handlePost}>Post</button>
-          }
-        </div>
+        <h2>Login</h2>
+        <input type="text" value={title} onChange={(e) => this.handleUpdateInput(e, 'title')} />
+        <input type="text" value={image} onChange={(e) => this.handleUpdateInput(e, 'image')} />
+        <button onClick={this.handLoginUser}>Add post</button>
       </div>
-    )
+    );
   }
 }
 
-const createPost = gql`
-  mutation ($title: String!, $image: String!, $author: ID!) {
-    createPost(title: $title, image: $image, authorId: $author) {
-      id
-    }
-  }
-`
+const mapDispatchToProps =  (dispatch) => bindActionCreators({
+  addPost,
+}, dispatch);
 
-const userQuery = gql`
-  query {
-    user {
-      id
-    }
-  }
-`
-
-export default graphql(createPost)(
-  graphql(userQuery, { options: { fetchPolicy: 'network-only' }} )(withRouter(CreatePost))
-)
+export default connect(
+  undefined,
+  mapDispatchToProps,
+)(AddPost);

@@ -1,48 +1,39 @@
 import React from 'react';
-import { gql, graphql } from 'react-apollo';
+import { connect } from 'react-redux';
+import { values } from 'lodash';
 
-import Loading from '../components/Loading';
-import PostList from '../components/PostList';
+import {
+  getPosts,
+  getAuthentication,
+} from '../ducks';
 
-const Latest = ({
-  data: {
-    allPosts = [],
-    user: {
-      id: author,
-    } = {},
-    loading = false,
-  } = {},
-  mutate,
-}) => {
-  function addVote({ id, positive }) {
-    mutate({variables: {id, positive, author}});
-  }
+const Latest = (props) => {
+  const { posts, authenticated } = props;
 
-  return loading ? <Loading /> : <PostList posts={allPosts} onVote={addVote} />
-};
+  const postsList = values(posts).map((post, index) => {
+    return (
+      <div key={index}>
+        <h2>{post.title}</h2>
+        <div>
+          <button disabled={!authenticated}>+</button>
+          <button disabled={!authenticated}>-</button>
+        </div>
+      </div>
+    )
+  });
 
-const createVote = gql`
-  mutation ($post: String!, $positive: Boolean!, $author: ID!) {
-    createVote(post: $post, positive: $positive, authorId: $author) {
-      id
-    }
-  }
-`
+  return (
+    <div>
+      {postsList}
+    </div>
+  );
+}
 
-const PostQuery = gql`query allPosts {
-  allPosts(orderBy: createdAt_DESC) {
-    id
-    image
-    title
-    author {
-      name
-    }
-    votes {
-      id
-    }
-  }
-}`
+const mapStateToProps = () => ({
+  posts: getPosts(),
+  authenticated: getAuthentication(),
+});
 
-export default graphql(createVote)(
-  graphql(PostQuery, { options: { fetchPolicy: 'network-only' }} )(Latest)
-)
+export default connect(
+  mapStateToProps,
+)(Latest);

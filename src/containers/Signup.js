@@ -1,106 +1,56 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router';
-import { graphql, gql } from 'react-apollo';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 
-class CreateUser extends Component {
+import { addUser } from '../ducks';
+
+class Signin extends Component {
   constructor(props) {
-    super();
+    super(props);
     autoBind(this);
 
     this.state = {
       email: '',
       password: '',
-      name: '',
     }
   }
 
-  async createUser() {
-    const {email, password, name} = this.state
-    const { createUser, signinUser } = this.props;
+  handleUpdateInput(e, field) {
+    const { value } = e.target;
 
-    const newUser = await createUser({variables: {email, password, name}});
-
-    if (newUser) {
-      const user = await signinUser({variables: {email, password}});
-
-      if (!user) {
-        return;
-      }
-
-      window.localStorage.setItem('graphcoolToken', user.data.signinUser.token)
-      this.props.history.replace('/submit');
-      window.location.reload();
-    }
+    this.setState({
+      ...this.state,
+      [field]: value,
+    });
   }
 
-  render () {
-    const { data, history } = this.props;
-    const { email, password, name } = this.state;
+  handleSubmitUser() {
+    const { addUser } = this.props;
+    const { email, password } = this.state;
 
-    if (data.loading) {
-      return (<div>Loading</div>)
-    }
+    addUser({ email, password });
+  }
 
-    if (data.user) {
-      history.replace('/submit');
-      window.location.reload();
-    }
+  render() {
+    const { email, password } = this.state;
 
     return (
       <div>
-        <div>
-          <input
-            value={email}
-            placeholder='Email'
-            onChange={(e) => this.setState({email: e.target.value})}
-          />
-          <input
-            type='password'
-            value={password}
-            placeholder='Password'
-            onChange={(e) => this.setState({password: e.target.value})}
-          />
-          <input
-            value={name}
-            placeholder='Name'
-            onChange={(e) => this.setState({name: e.target.value})}
-          />
-
-          <button disabled={!name || !email || !password} onClick={this.createUser}>Sign up</button>
-        </div>
+        <h2>Add user</h2>
+        <input type="text" value={email} onChange={(e) => this.handleUpdateInput(e, 'email')} />
+        <input type="text" value={password} onChange={(e) => this.handleUpdateInput(e, 'password')} />
+        <button onClick={this.handleSubmitUser}>Add user</button>
       </div>
-    )
+    );
   }
 }
 
-const createUser = gql`
-  mutation ($email: String!, $password: String!, $name: String!) {
-    createUser(authProvider: {email: {email: $email, password: $password}}, name: $name) {
-      id
-    }
-  }
-`
+const mapDispatchToProps =  (dispatch) => bindActionCreators({
+  addUser,
+}, dispatch);
 
-const signinUser = gql`
-  mutation ($email: String!, $password: String!) {
-    signinUser(email: {email: $email, password: $password}) {
-      token
-    }
-  }
-`
-
-const userQuery = gql`
-  query {
-    user {
-      id
-    }
-  }
-`
-
-export default graphql(createUser, {name: 'createUser'})(
-  graphql(userQuery, { options: { fetchPolicy: 'network-only' }})(
-    graphql(signinUser, {name: 'signinUser'})(
-      withRouter(CreateUser))
-    )
-)
+export default connect(
+  undefined,
+  mapDispatchToProps,
+)(Signin);

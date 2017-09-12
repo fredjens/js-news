@@ -1,99 +1,61 @@
 import React, { Component } from 'react';
-import { graphql, gql } from 'react-apollo';
-import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 
-import PostList from '../components/PostList';
+import { addPost } from '../ducks';
 
-class Submit extends Component {
+class AddPost extends Component {
   constructor(props) {
     super(props);
     autoBind(this);
-  }
 
-  logout() {
-    window.localStorage.removeItem('graphcoolToken');
-    this.props.history.push('/submit')
-    window.location.reload();
-  }
-
-  showLogin() {
-    this.props.history.push('/submit/login')
-  }
-
-  showSignup() {
-    this.props.history.push('/submit/signup')
-  }
-
-  render () {
-    const { data, history } = this.props;
-
-    if (data.loading) {
-      return (<div>Loading</div>)
+    this.state = {
+      title: '',
+      image: '',
     }
+  }
 
-    if (data.user) {
-      return (
-        <div>
-          <span>
-            Logged in as {data.user.name}
-          </span>
-          <div>
-            <button
-              onClick={this.logout}
-            >
-              Logout
-            </button>
-          </div>
-          <button onClick={() => history.push('/submit/add')}>
-            Add new
-          </button>
-          {data.user.stories.length === 0 && <h2>No posts</h2>}
-          <PostList posts={data.user.stories}/>
-        </div>
-      );
-    }
+  handleUpdateInput(e, field) {
+    const { value } = e.target;
+
+    this.setState({
+      ...this.state,
+      [field]: value,
+    });
+  }
+
+  handLoginUser() {
+    const { addPost } = this.props;
+    const { title, image } = this.state;
+
+    addPost({ title, image });
+
+    this.setState({
+      title: '',
+      image: '',
+    })
+  }
+
+  render() {
+    const { title, image } = this.state;
 
     return (
       <div>
-        <div className='pv3'>
-          <div>
-            <button
-              onClick={this.showLogin}
-            >
-              Log in with Email
-            </button>
-          </div>
-          <div>
-            <button
-              onClick={this.showSignup}
-            >
-              Sign up with Email
-            </button>
-          </div>
-        </div>
+        <h2>Add post</h2>
+        <input type="text" value={title} onChange={(e) => this.handleUpdateInput(e, 'title')} />
+        <input type="text" value={image} onChange={(e) => this.handleUpdateInput(e, 'image')} />
+        <button onClick={this.handLoginUser}>Add post</button>
       </div>
-    )
+    );
   }
 }
 
+const mapDispatchToProps =  (dispatch) => bindActionCreators({
+  addPost,
+}, dispatch);
 
-const userQuery = gql`
-  query {
-    user {
-      id
-      name
-      stories {
-        title
-        image
-        id
-      }
-    }
-  }
-`
-
-export default graphql(userQuery, {
-  options: {
-    fetchPolicy: 'network-only'
-  }
-})(withRouter(Submit))
+export default connect(
+  undefined,
+  mapDispatchToProps,
+)(AddPost);
