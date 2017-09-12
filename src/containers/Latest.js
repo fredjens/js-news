@@ -9,19 +9,16 @@ const Latest = ({
     allPosts = [],
     loading = false,
   } = {},
-}) => {
-
-  if (loading) {
-    return <Loading />
-  }
-
-  return <PostList posts={allPosts} />
-}
+}) => loading ? <Loading /> : <PostList posts={allPosts} />;
 
 const PostQuery = gql`query allPosts {
   allPosts(orderBy: createdAt_DESC) {
     id
     image
+    title
+    author {
+      name
+    }
   }
 }`
 
