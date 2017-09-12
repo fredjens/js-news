@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { graphql, gql } from 'react-apollo';
 import { withRouter } from "react-router-dom";
+import autoBind from 'react-autobind';
 
 import PostList from '../components/PostList';
 
 class Submit extends Component {
+  constructor(props) {
+    super(props);
+    autoBind(this);
+  }
+
   logout() {
     window.localStorage.removeItem('graphcoolToken');
     this.props.history.push('/submit')

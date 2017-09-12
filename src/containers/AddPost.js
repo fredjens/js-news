@@ -38,6 +38,7 @@ class CreatePost extends React.Component {
 
   render () {
     const { data, history } = this.props;
+    const { title, image } = this.state;
 
     if (data.loading) {
       return (<div>Loading</div>)
@@ -51,19 +52,19 @@ class CreatePost extends React.Component {
       <div>
         <div>
           <input
-            value={this.state.title}
+            value={title}
             placeholder='Description'
             onChange={(e) => this.setState({title: e.target.value})}
           />
           <input
-            value={this.state.image}
+            value={image}
             placeholder='Image Url'
             onChange={(e) => this.setState({image: e.target.value})}
           />
-          {this.state.image &&
-            <img src={this.state.image} alt='presentation' />
+          {image &&
+            <img src={image} alt='presentation' />
           }
-          {this.state.title && this.state.image &&
+          {title && image &&
             <button onClick={this.handlePost}>Post</button>
           }
         </div>

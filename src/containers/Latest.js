@@ -7,9 +7,27 @@ import PostList from '../components/PostList';
 const Latest = ({
   data: {
     allPosts = [],
+    user: {
+      id: author,
+    } = {},
     loading = false,
   } = {},
-}) => loading ? <Loading /> : <PostList posts={allPosts} />;
+  mutate,
+}) => {
+  function addVote({ id, positive }) {
+    mutate({variables: {id, positive, author}});
+  }
+
+  return loading ? <Loading /> : <PostList posts={allPosts} onVote={addVote} />
+};
+
+const createVote = gql`
+  mutation ($post: String!, $positive: Boolean!, $author: ID!) {
+    createVote(post: $post, positive: $positive, authorId: $author) {
+      id
+    }
+  }
+`
 
 const PostQuery = gql`query allPosts {
   allPosts(orderBy: createdAt_DESC) {
@@ -19,11 +37,12 @@ const PostQuery = gql`query allPosts {
     author {
       name
     }
+    votes {
+      id
+    }
   }
 }`
 
-export default graphql(PostQuery, {
-  options: {
-    fetchPolicy: 'network-only'
-  },
-})(Latest);
+export default graphql(createVote)(
+  graphql(PostQuery, { options: { fetchPolicy: 'network-only' }} )(Latest)
+)
