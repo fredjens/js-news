@@ -18,7 +18,6 @@ const store = createStore(
 
 database.ref('/').on('value', (snapshot) => {
   const collection = snapshot.val();
-  console.log('COLLECTION', collection);
   store.dispatch(updateFirebase(collection));
 });
 

@@ -1,5 +1,7 @@
 import uuid from 'uuid';
 import store from '../store';
+import { isEmpty, values } from 'lodash';
+import { getDate } from '../utils/get-date';
 
 import {
   writeToFirebase,
@@ -26,20 +28,25 @@ const AUTH = 'AUTH';
 
 const state = () => store.getState();
 
-export const getAuthentication = () => {
-  if (state().user) {
-    return true;
-  }
-
-  return false;
-};
-
 export const getUser = () => {
   return state().user;
 };
 
 export const getPosts = () => {
   return state().posts;
+};
+
+export const getPostsByUserId = () => {
+  const { user, posts } = state();
+  return values(posts).filter(post => post.user === user);
+};
+
+export const getAuthentication = () => {
+  if (!isEmpty(state().user)) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -63,30 +70,25 @@ export const logOutUser = () => {
  */
 
 export const addPost = ({ title, image }) => {
-  console.log('add new post!');
   const id = uuid.v4();
+  const user = store.getState().user;
+  const date = getDate();
+  console.log('date', date);
+
+  if (!user) {
+    return;
+  }
 
   return (dispatch) => writeToFirebase('/posts', (data) => ({
       ...data,
-      [id]: { title, image, id },
+      [id]: { title, image, id, user, date, votes: 0 },
     }));
 };
 
-export const upvote = () => {
-  console.log('upvote 😀');
-
-  return (dispatch) =>  writeToFirebase((votes) => ({
-    ...votes,
-    up: votes.up + 1,
-  }));
-};
-
-export const downvote = () => {
-  console.log('downvote 😞');
-
-  return (dispatch) =>  writeToFirebase((votes) => ({
-    ...votes,
-    down: votes.down + 1,
+export const upvotePost = ({ id }) => {
+  return (dispatch) =>  writeToFirebase(`/posts/${id}`, (post) => ({
+    ...post,
+    votes: (post.votes || 0) + 1,
   }));
 };
 
@@ -102,7 +104,6 @@ export const addUserToStore = (payload) => {
 };
 
 export const updateFirebase = (collection) => {
-  console.log('update');
   return {
     type: UPDATE,
     collection,
@@ -116,10 +117,12 @@ export const updateFirebase = (collection) => {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case AUTH:
-      console.log('action', action);
+      const { payload } = action;
+      const user = payload ? payload.uid : null;
+
       return {
         ...state,
-        user: action.payload.uid,
+        user,
       };
     case UPDATE:
       return {

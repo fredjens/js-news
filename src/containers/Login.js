@@ -45,7 +45,7 @@ class Login extends Component {
         <h2>Login</h2>
         <input type="text" value={email} onChange={(e) => this.handleUpdateInput(e, 'email')} />
         <input type="text" value={password} onChange={(e) => this.handleUpdateInput(e, 'password')} />
-        <button onClick={this.handLoginUser}>Add user</button>
+        <button onClick={this.handLoginUser}>Login</button>
       </div>
     );
   }
