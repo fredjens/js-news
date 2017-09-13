@@ -73,7 +73,6 @@ export const addPost = ({ title, image }) => {
   const id = uuid.v4();
   const user = store.getState().user;
   const date = getDate();
-  console.log('date', date);
 
   if (!user) {
     return;
@@ -81,14 +80,14 @@ export const addPost = ({ title, image }) => {
 
   return (dispatch) => writeToFirebase('/posts', (data) => ({
       ...data,
-      [id]: { title, image, id, user, date, votes: 0 },
+      [id]: { title, image, id, user, date, votes: {} },
     }));
 };
 
-export const upvotePost = ({ id }) => {
-  return (dispatch) =>  writeToFirebase(`/posts/${id}`, (post) => ({
-    ...post,
-    votes: (post.votes || 0) + 1,
+export const upvotePost = ({ id, user }) => {
+  return (dispatch) =>  writeToFirebase(`/posts/${id}/votes`, (votes) => ({
+    ...votes,
+    [user]: true,
   }));
 };
 

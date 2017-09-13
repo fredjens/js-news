@@ -8,30 +8,32 @@ import {
   getPosts,
   getAuthentication,
   upvotePost,
+  getUser,
 } from '../ducks';
 
 const Latest = (props) => {
-  const { posts, authenticated, upvotePost } = props;
+  const { posts, authenticated, upvotePost, user: loggedInUser = '' } = props;
 
   const sortPostsByDate = sortBy(sortBy(values(posts), 'date'), 'votes').reverse();
 
   const postsList = sortPostsByDate.map((post, index) => {
-    const { id, title, image, date, votes = 0 } = post;
+    const { id, title, user, image, date, votes = 0 } = post;
 
     return (
       <div key={index}>
         <h2>{title}</h2>
         <div>{distanceInWordsToNow(date)}</div>
         <img src={image} alt={title} />
-        <h3>{votes}</h3>
+        <h3>{values(votes).length}</h3>
+        <div>user: {user}</div>
         <div>
           <button
             disabled={!authenticated}
-            onClick={() => upvotePost({ id })}
+            onClick={() => upvotePost({ id, user: loggedInUser })}
           >+</button>
         </div>
       </div>
-    )
+    );
   });
 
   return (
@@ -39,11 +41,12 @@ const Latest = (props) => {
       {postsList}
     </div>
   );
-}
+};
 
 const mapStateToProps = (state) => ({
   posts: getPosts(state),
   authenticated: getAuthentication(state),
+  user: getUser(state),
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

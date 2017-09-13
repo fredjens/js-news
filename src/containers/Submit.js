@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
+import { values } from 'lodash';
 
 import {
   addPost,
@@ -17,7 +18,7 @@ class AddPost extends Component {
     this.state = {
       title: '',
       image: '',
-    }
+    };
   }
 
   handleUpdateInput(e, field) {
@@ -38,7 +39,7 @@ class AddPost extends Component {
     this.setState({
       title: '',
       image: '',
-    })
+    });
   }
 
   render() {
@@ -46,17 +47,15 @@ class AddPost extends Component {
     const { authenticated, posts } = this.props;
 
     const postsList = posts.map((post, index) => {
-      const { title, votes = 0 } = post;
+      const { title, votes = {} } = post;
 
       return (
         <div key={index}>
           <h2>{title}</h2>
-          <h3>{votes}</h3>
+          <h3>{values(votes).length}</h3>
         </div>
-      )
+      );
     });
-
-    const count = posts.reduce((sum, post) => sum + post.votes, 0)
 
     const myProfile = (
       <div>
@@ -64,7 +63,6 @@ class AddPost extends Component {
         <input type="text" value={title} onChange={(e) => this.handleUpdateInput(e, 'title')} />
         <input type="text" value={image} onChange={(e) => this.handleUpdateInput(e, 'image')} />
         <button onClick={this.handLoginUser}>Add post</button>
-        <h4>{count}</h4>
         <div>
           {postsList}
         </div>
