@@ -13,7 +13,7 @@ class Signin extends Component {
     this.state = {
       email: '',
       password: '',
-    }
+    };
   }
 
   handleUpdateInput(e, field) {

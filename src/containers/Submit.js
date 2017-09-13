@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 import { values } from 'lodash';
+import { Link } from 'react-router-dom';
 
 import {
   addPost,
@@ -44,7 +45,7 @@ class AddPost extends Component {
 
   render() {
     const { title, image } = this.state;
-    const { authenticated, posts } = this.props;
+    const { authenticated, posts, children } = this.props;
 
     const postsList = posts.map((post, index) => {
       const { title, votes = {} } = post;
@@ -66,12 +67,13 @@ class AddPost extends Component {
         <div>
           {postsList}
         </div>
+        {children}
       </div>
     );
 
     const login = (
       <div>
-        You need to login.
+        You need to <Link to="/signup">signup</Link> or <Link to="/login">login</Link>.
       </div>
     );
 
