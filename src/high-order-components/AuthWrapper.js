@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import autoBind from 'react-autobind';
-import { connect } from 'react-redux';
 
 import { checkFirebaseAuthenication  } from '../services/firebase';
 
@@ -27,7 +26,5 @@ class AuthWrapper extends Component {
     return children;
   }
 };
-
-
 
 export default AuthWrapper;

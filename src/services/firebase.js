@@ -1,6 +1,8 @@
 import firebase from 'firebase';
-import { addUserToStore } from '../ducks';
+import { addUserToStore, addUserToFirebase } from '../ducks';
 import store from '../store';
+
+var provider = new firebase.auth.GithubAuthProvider();
 
 /**
  * Write to Firebase
@@ -12,23 +14,13 @@ export const writeToFirebase = (collection, reducer) => {
 };
 
 /**
- * Add user to Firebase
- */
-
-export const addUserToFirebaseService = ({ email, password }) => {
-  firebase.auth().createUserWithEmailAndPassword(email, password).catch(error => {
-    console.log(error);
-  });
-};
-
-/**
  * Sign in Firebase user
  */
 
-export const signInFirebaseService = ({ email, password }) => {
-  firebase.auth().signInWithEmailAndPassword(email, password).catch(error => {
-    console.log(error);
-  });
+export const signInFirebaseService = async () => {
+  const user = await firebase.auth().signInWithPopup(provider);
+  const { uid: id, displayName: name = 'Anonymous', email = '', photoURL: photo = '' } = user.user;
+  store.dispatch(addUserToFirebase({ id, name, photo, email }));
 };
 
 /**
@@ -51,7 +43,7 @@ export const checkFirebaseAuthenication = () => {
   firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in.
-      console.log('user signed in');
+      console.log('user signed in', user.uid);
       store.dispatch(addUserToStore(user));
       return true;
       // ...

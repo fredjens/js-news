@@ -5,14 +5,14 @@ import { getDate } from '../utils/get-date';
 
 import {
   writeToFirebase,
-  addUserToFirebaseService,
   signInFirebaseService,
   signOutFirebaseService,
 } from '../services/firebase';
 
 const initialState = {
   posts: {},
-  user: {},
+  users: {},
+  user: '',
 };
 
 /**
@@ -26,23 +26,27 @@ const AUTH = 'AUTH';
  * Selectors
  */
 
-const state = () => store.getState();
+export const getUsernameById = (state, id = '') => {
+  const { users } = state;
 
-export const getUser = () => {
-  return state().user;
+  if (!users) {
+    return '';
+  }
+
+  if (!users[id]) {
+    return '';
+  }
+
+  return users[id].name;
 };
 
-export const getPosts = () => {
-  return state().posts;
-};
-
-export const getPostsByUserId = () => {
-  const { user, posts } = state();
+export const getPostsByUserId = (state) => {
+  const { user, posts } = state;
   return values(posts).filter(post => post.user === user);
 };
 
-export const getAuthentication = () => {
-  if (!isEmpty(state().user)) {
+export const getAuthentication = (state) => {
+  if (!isEmpty(state.user)) {
     return true;
   }
 
@@ -53,12 +57,8 @@ export const getAuthentication = () => {
  * Actions
  */
 
-export const addUser = ({ email, password }) => {
-  return () => addUserToFirebaseService({ email, password });
-};
-
-export const signInUser = ({ email, password }) => {
-  return () =>  signInFirebaseService({ email, password });
+export const signInUser = () => {
+  return () =>  signInFirebaseService();
 };
 
 export const logOutUser = () => {
@@ -88,6 +88,13 @@ export const upvotePost = ({ id, user }) => {
   return (dispatch) =>  writeToFirebase(`/posts/${id}/votes`, (votes) => ({
     ...votes,
     [user]: true,
+  }));
+};
+
+export const addUserToFirebase = ({ id, photo, name, email }) => {
+  return (dispatch) =>  writeToFirebase(`/users`, (users) => ({
+    ...users,
+    [id]: { photo, name, email },
   }));
 };
 

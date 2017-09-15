@@ -3,7 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 import { values } from 'lodash';
-import { Link } from 'react-router-dom';
+
+import {
+  getDataFromUrl,
+} from '../services/itch';
+
+import Container from '../primitives/Container';
+import Card from '../primitives/Card';
 
 import {
   addPost,
@@ -17,18 +23,23 @@ class AddPost extends Component {
     autoBind(this);
 
     this.state = {
-      title: '',
-      image: '',
+      url: '',
     };
   }
 
-  handleUpdateInput(e, field) {
+  handleUrlInput(e) {
+    e.preventDefault();
     const { value } = e.target;
 
     this.setState({
       ...this.state,
-      [field]: value,
+      url: value,
     });
+  }
+
+  submitUrl() {
+    const { url } = this.state;
+    getDataFromUrl(url);
   }
 
   handLoginUser() {
@@ -38,13 +49,12 @@ class AddPost extends Component {
     addPost({ title, image });
 
     this.setState({
-      title: '',
-      image: '',
+      url: '',
     });
   }
 
   render() {
-    const { title, image } = this.state;
+    const { url } = this.state;
     const { authenticated, posts, children } = this.props;
 
     const postsList = posts.map((post, index) => {
@@ -58,26 +68,21 @@ class AddPost extends Component {
       );
     });
 
-    const myProfile = (
-      <div>
-        <h2>Add post</h2>
-        <input type="text" value={title} onChange={(e) => this.handleUpdateInput(e, 'title')} />
-        <input type="text" value={image} onChange={(e) => this.handleUpdateInput(e, 'image')} />
-        <button onClick={this.handLoginUser}>Add post</button>
-        <div>
+    const AddPost = (
+      <Container>
+        <Card>
+          <h2>Add post</h2>
+            <input type="text" value={url} onChange={this.handleUrlInput} />
+            <button onClick={this.submitUrl}>Add post</button>
+        </Card>
+        <Card>
           {postsList}
-        </div>
+        </Card>
         {children}
-      </div>
+      </Container>
     );
 
-    const login = (
-      <div>
-        You need to <Link to="/signup">signup</Link> or <Link to="/login">login</Link>.
-      </div>
-    );
-
-    return authenticated ? myProfile : login;
+    return authenticated ? AddPost : null;
   }
 }
 

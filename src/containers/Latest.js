@@ -4,44 +4,36 @@ import { bindActionCreators } from 'redux';
 import { values, sortBy } from 'lodash';
 import { distanceInWordsToNow } from 'date-fns';
 
+import Card, { CardTitle } from '../primitives/Card';
+import Container from '../primitives/Container';
+
 import {
-  getPosts,
   getAuthentication,
   upvotePost,
-  getUser,
 } from '../ducks';
 
 const Latest = (props) => {
-  const { posts, authenticated, upvotePost, user: loggedInUser = '' } = props;
+  const {
+    posts = {},
+    authenticated,
+    upvotePost,
+    user: loggedInUser = '',
+    users = {},
+  } = props;
 
   const sortPostsByDate = sortBy(values(posts), 'date').reverse();
 
   const postsList = sortPostsByDate.map((post, index) => {
     const { id, title, user, image, date, votes = 0 } = post;
 
-    return (
-      <div key={index} style={{
-        background: '#fff',
-        padding: '1rem',
-        margin: '.5rem 0',
-        position: 'relative',
-      }}>
-        <h2 style={{
-          margin: '0 0 .5rem',
-          fontSize: '4rem',
-          lineHeight: '1',
-        }}><a href="">{title}</a></h2>
-        <p style={{
-          fontSize: '.9rem',
-          color: '#000',
-          margin: '0',
-        }}>user: {user} • {distanceInWordsToNow(date)} ago</p>
+    const username = (users[user] || {}).name || 'Anonymous';
 
+    return (
+      <Card key={index}>
+        <CardTitle>{title}</CardTitle>
         <div style={{
-          position: 'absolute',
           left: '-35px',
           top: '40%',
-          transform: 'translateY(-40%)',
         }}>
           <button
             disabled={!authenticated}
@@ -57,10 +49,11 @@ const Latest = (props) => {
               border: '0',
               fontSize: '1.3rem',
               cursor: 'pointer',
+              display: 'inline-block',
             }}
           >
             <div style={{
-              position: 'fixed',
+              position: 'absolute',
               top: '-16px',
               fontSize: '.9rem',
             }}>
@@ -68,27 +61,31 @@ const Latest = (props) => {
             </div>
             👍
           </button>
+          <p style={{
+            fontSize: '.9rem',
+            color: '#000',
+            margin: '0',
+          }}>user: {username} • {distanceInWordsToNow(date)} ago</p>
         </div>
-      </div>
+      </Card>
     );
   });
 
   return (
-    <div style={{
-      maxWidth: '500px',
-      margin: '0 auto',
-      paddingTop: '2rem',
-    }}>
+    <Container>
       {postsList}
-    </div>
+    </Container>
   );
 };
 
-const mapStateToProps = (state) => ({
-  posts: getPosts(state),
-  authenticated: getAuthentication(state),
-  user: getUser(state),
-});
+const mapStateToProps = (state) => {
+  return ({
+    posts: state.posts,
+    authenticated: getAuthentication(state),
+    user: state.user,
+    users: state.users,
+  });
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   upvotePost,
