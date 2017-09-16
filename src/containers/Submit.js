@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
-import { values } from 'lodash';
 
 import {
   getDataFromUrl,
@@ -24,6 +23,7 @@ class AddPost extends Component {
 
     this.state = {
       url: '',
+      fetching: false,
     };
   }
 
@@ -37,42 +37,40 @@ class AddPost extends Component {
     });
   }
 
-  submitUrl(e) {
+  async submitUrl(e) {
     e.preventDefault();
+
     const { url } = this.state;
-    getDataFromUrl(url);
-  }
-
-  handLoginUser() {
     const { addPost } = this.props;
-    const { title, image } = this.state;
 
-    addPost({ title, image });
+    this.setState({ fetching: true });
 
-    this.setState({
-      url: '',
-    });
+    const { data } = await getDataFromUrl(url);
+
+    const removeErrormessage = () => {
+      setTimeout(() => this.setState({ error: '', fetching: false }), 3000);
+    };
+
+    if (!data) {
+      this.setState({
+        error: 'Posting failed, check your url',
+      }, removeErrormessage);
+      return;
+    }
+
+    this.setState({ fetching: false });
+    addPost({ post: data });
   }
 
   render() {
-    const { url } = this.state;
-    const { authenticated, posts, children } = this.props;
-
-    const postsList = posts.map((post, index) => {
-      const { title, votes = {} } = post;
-
-      return (
-        <div key={index}>
-          <h2>{title}</h2>
-          <h3>{values(votes).length}</h3>
-        </div>
-      );
-    });
+    const { url, fetching, error } = this.state;
+    const { authenticated } = this.props;
 
     const AddPost = (
       <Container>
-        <Card>
-          <h2>Add post</h2>
+        <Card dark>
+          <h2>Add an awesome post</h2>
+          <p>About JavaScript or related topics</p>
           <form onSubmit={this.submitUrl}>
             <input
               style={{
@@ -87,10 +85,11 @@ class AddPost extends Component {
             />
           </form>
         </Card>
-        <Card>
-          {postsList}
-        </Card>
-        {children}
+        {fetching && (
+          <Card>
+            {error ? error : 'Fetching article...'}
+          </Card>
+        )}
       </Container>
     );
 

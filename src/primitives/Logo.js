@@ -1,8 +1,10 @@
 import glamorous from 'glamorous';
 import { Link } from 'react-router-dom';
 
-const Container = glamorous(Link)({
-  height: '100px',
+const Logo = glamorous(Link)({
+  fontSize: '1.5rem',
+  padding: '0 1rem',
+  fontFamily: '"Rubik", sans-serif',
 });
 
-export default Container;
+export default Logo;

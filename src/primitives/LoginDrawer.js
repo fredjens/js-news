@@ -8,7 +8,7 @@ const bounce = css.keyframes({
 
 const Container = glamorous.div({
   padding: '3rem 1rem',
-  maxWidth: '500px',
+  maxWidth: '300px',
   margin: '0 auto',
   animation: `${bounce} 200ms ease-out`,
 });

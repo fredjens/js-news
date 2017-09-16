@@ -69,7 +69,7 @@ export const logOutUser = () => {
  * Write to Firebase
  */
 
-export const addPost = ({ title, image }) => {
+export const addPost = ({ post }) => {
   const id = uuid.v4();
   const user = store.getState().user;
   const date = getDate();
@@ -78,9 +78,9 @@ export const addPost = ({ title, image }) => {
     return;
   }
 
-  return (dispatch) => writeToFirebase('/posts', (data) => ({
-      ...data,
-      [id]: { title, image, id, user, date, votes: {} },
+  return (dispatch) => writeToFirebase('/posts', (posts) => ({
+      ...posts,
+      [id]: { ...post, id, date, user },
     }));
 };
 

@@ -1,11 +1,18 @@
 import axios from 'axios';
 
 export const getDataFromUrl =  async (url) => {
-  const article = await axios.get(`https://itchapage.herokuapp.com/itch?url=${url}`);
+  try {
+    const article = await axios.get(`https://itchapage.herokuapp.com/itch?url=${url}`);
 
-  if (!article) {
-    return;
+    if (!article) {
+      return;
+    }
+
+    console.log(article);
+
+    return article;
+  } catch (err) {
+    console.log(err);
+    return err;
   }
-
-  console.log(article);
 };

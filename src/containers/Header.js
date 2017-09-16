@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
 import { Link } from 'react-router-dom';
+import Submit from '../containers/Submit';
 
 import {
   getAuthentication,
@@ -29,30 +30,20 @@ class Header extends Component {
   }
 
   handleLogout = () => {
-    const { logOutUser, history} = this.props;
+    const { logOutUser } = this.props;
     logOutUser();
-    history.push('/');
-
   };
 
   handleAddStory() {
-    const { history, authenticated } = this.props;
     const { showLogin } = this.state;
 
-    if (!authenticated) {
-      return this.setState({ showLogin: !showLogin });
-    }
-
-    history.push('submit');
+    return this.setState({ showLogin: !showLogin });
   }
 
   handleSignInUser() {
-    const { signInUser, history } = this.props;
+    const { signInUser } = this.props;
 
     signInUser();
-
-    this.setState({ showLogin: false });
-    history.push('submit');
   };
 
   render() {
@@ -60,20 +51,25 @@ class Header extends Component {
     const { authenticated, user } = this.props;
 
     const userInfo = (
-      <Link to="submit">
+      <span style={{
+        marginRight: '1rem',
+      }}>
         {user}
-      </Link>
+      </span>
     );
 
     const login = (
       <LoginDrawer>
-        <h2>Hi! You need to sign in to add stories</h2>
+        <h2 style={{
+          color: '#fff',
+          marginBottom: '1rem',
+        }}>You need to sign in to add stories</h2>
         <StyledButton
           white
           onClick={this.handleSignInUser}
         >
           <img src={GithubLogo} alt="Github logo" style={{ width: '30px', marginRight: '5px', verticalAlign: 'middle' }} />
-          Signup/Login with Github
+          Signup with Github
         </StyledButton>
       </LoginDrawer>
     );
@@ -82,10 +78,6 @@ class Header extends Component {
       <div>
         <StyledHeader>
           <Logo to="/">New/JS</Logo>
-          <Navigation>
-            <NavigationLink to="/">Latest</NavigationLink>
-            <NavigationLink to="/">Top</NavigationLink>
-          </Navigation>
           <StyledHeaderRight>
             {authenticated && userInfo}
             <StyledButton
@@ -100,7 +92,8 @@ class Header extends Component {
             )}
           </StyledHeaderRight>
         </StyledHeader>
-        {showLogin && login}
+        {showLogin && !authenticated && login}
+        {showLogin && authenticated && <Submit />}
       </div>
     );
   }

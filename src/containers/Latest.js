@@ -24,15 +24,18 @@ const Latest = (props) => {
   const sortPostsByDate = sortBy(values(posts), 'date').reverse();
 
   const postsList = sortPostsByDate.map((post, index) => {
-    const { id, title, user, image, date, votes = 0 } = post;
+    const { id, title, user, image, date, votes = 0, source: { domain = '', url = ''} = {} } = post;
 
     const username = (users[user] || {}).name || 'Anonymous';
 
     return (
       <Card key={index}>
+        {image && <img src={image} />}
+        <div>
+          {domain}
+        </div>
         <CardTitle>{title}</CardTitle>
         <div style={{
-          left: '-35px',
           top: '40%',
         }}>
           <button
@@ -40,21 +43,18 @@ const Latest = (props) => {
             onClick={() => upvotePost({ id, user: loggedInUser })}
             style={{
               width: '40px',
+              position: 'absolute',
               height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              borderRadius: '50%',
               justifyContent: 'center',
-              background: '#222',
               border: '0',
+              left: '10px',
+              top: '65px',
               fontSize: '1.3rem',
               cursor: 'pointer',
-              display: 'inline-block',
+              background: 'none',
             }}
           >
             <div style={{
-              position: 'absolute',
-              top: '-16px',
               fontSize: '.9rem',
             }}>
               {values(votes).length}
@@ -65,7 +65,7 @@ const Latest = (props) => {
             fontSize: '.9rem',
             color: '#000',
             margin: '0',
-          }}>user: {username} • {distanceInWordsToNow(date)} ago</p>
+          }}>0 comments * Posted by {username} * {distanceInWordsToNow(date)} ago</p>
         </div>
       </Card>
     );

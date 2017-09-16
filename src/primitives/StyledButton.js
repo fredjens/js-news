@@ -2,7 +2,7 @@ import glamorous from 'glamorous';
 
 const Button = glamorous.button({
   fontFamily: '"Roboto Mono", monospace',
-  background: '#3397d0',
+  background: '#000',
   color: '#fff',
   border: '0',
   padding: '.5rem 1rem',
