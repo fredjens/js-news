@@ -30,7 +30,7 @@ app.use(history());
 /**
  * Serve static files from the appropriate folder
  */
-app.use(express.static(`${__dirname}/../../build`));
+app.use(express.static(`${__dirname}/../build`));
 
 /**
  * Attach server to port
