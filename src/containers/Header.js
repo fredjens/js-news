@@ -13,9 +13,10 @@ import {
 
 import StyledHeader, { StyledHeaderRight } from '../primitives/StyledHeader';
 import Logo from '../primitives/Logo';
-import StyledButton from '../primitives/StyledButton';
 import LoginDrawer from '../primitives/LoginDrawer';
+import StyledButton from '../primitives/StyledButton';
 import GithubLogo from '../assets/github.png';
+import Close from '../components/Close';
 
 class Header extends Component {
   constructor(props) {
@@ -26,26 +27,14 @@ class Header extends Component {
     };
   }
 
-  handleLogout = () => {
-    const { logOutUser } = this.props;
-    logOutUser();
-  };
-
   handleAddStory() {
     const { showLogin } = this.state;
-
     return this.setState({ showLogin: !showLogin });
   }
 
-  handleSignInUser() {
-    const { signInUser } = this.props;
-
-    signInUser();
-  };
-
   render() {
     const { showLogin } = this.state;
-    const { authenticated, user } = this.props;
+    const { authenticated, user, signInUser, logOutUser } = this.props;
 
     const userInfo = (
       <span style={{
@@ -63,11 +52,12 @@ class Header extends Component {
         }}>You need to sign in to add stories</h2>
         <StyledButton
           white
-          onClick={this.handleSignInUser}
+          onClick={signInUser}
         >
           <img src={GithubLogo} alt="Github logo" style={{ width: '30px', marginRight: '5px', verticalAlign: 'middle' }} />
           Signup with Github
         </StyledButton>
+        <Close onClick={() => this.setState({ showLogin: false })} />
       </LoginDrawer>
     );
 
@@ -76,7 +66,7 @@ class Header extends Component {
         <StyledHeader>
           <Logo to="/">
             <StyledButton>↓ Top</StyledButton>
-            JS
+            <span style={{ marginLeft: '.5rem'}}>JS</span>
           </Logo>
           <StyledHeaderRight>
             {authenticated && userInfo}
@@ -87,7 +77,7 @@ class Header extends Component {
             {authenticated && (
               <StyledButton
                 white
-                onClick={this.handleLogout}
+                onClick={logOutUser}
               >Logout</StyledButton>
             )}
           </StyledHeaderRight>

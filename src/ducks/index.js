@@ -98,6 +98,19 @@ export const addUserToFirebase = ({ id, photo, name, email }) => {
   }));
 };
 
+export const addComment = ({ post, author, text }) => {
+  const id = uuid.v4();
+  const date = getDate();
+
+  return (dispatch) => writeToFirebase(`/posts/${post}`, (post) => ({
+      ...post,
+      comments: {
+        ...post.comments,
+        [id]: { id, author, text, date },
+      },
+    }));
+};
+
 /**
  * GLobal update function
  */

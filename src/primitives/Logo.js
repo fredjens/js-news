@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 const Logo = glamorous(Link)({
   fontSize: '1rem',
-  padding: '0 1rem',
   fontFamily: '"Rubik", sans-serif',
 });
 

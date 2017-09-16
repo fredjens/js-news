@@ -7,7 +7,6 @@ const Button = glamorous.button({
   border: '0',
   padding: '.5rem 1rem',
   fontSize: '.9rem',
-  marginRight: '.5rem',
   cursor: 'pointer',
 }, props => props.white && ({
     background: '#fff',

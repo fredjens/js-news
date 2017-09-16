@@ -10,15 +10,20 @@ const Card = glamorous.div({
   ':hover': {
     background: 'rgba(255, 255, 255, 1)',
   },
-}, props => props.dark && ({
+}, props => {
+  if (props.dark) return {
     background: '#000',
     color: '#fff',
 
     ':hover': {
       background: '#000',
     },
-  }),
-);
+  };
+
+  if (props.small) return {
+    padding: '1rem',
+  };
+});
 
 export const CardTitle = glamorous.a({
   margin: '0 0 .5rem',
@@ -31,7 +36,7 @@ export const CardTitle = glamorous.a({
   cursor: 'pointer',
 
   ':hover': {
-    boxShadow: 'inset 0 -0.14em white, inset 0 -.4em #00dbde',
+    boxShadow: 'inset 0 -0.14em white, inset 0 -.5em #00dbde',
   },
 });
 

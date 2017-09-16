@@ -7,6 +7,7 @@ const bounce = css.keyframes({
 });
 
 const Container = glamorous.div({
+  position: 'relative',
   padding: '3rem 1rem',
   maxWidth: '300px',
   margin: '0 auto',

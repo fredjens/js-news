@@ -9,7 +9,7 @@ const StyledHeader = glamorous.div({
   background: '#fff',
   position: 'relative',
   zIndex: '9999',
-  padding: '.5rem 0',
+  padding: '.5rem 1rem',
 });
 
 export const StyledHeaderRight = glamorous.div({

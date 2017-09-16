@@ -43,7 +43,7 @@ class AddPost extends Component {
     e.preventDefault();
 
     const { url } = this.state;
-    const { addPost } = this.props;
+    const { addPost, onClose } = this.props;
 
     this.setState({ fetching: true });
 
@@ -62,6 +62,7 @@ class AddPost extends Component {
 
     this.setState({ fetching: false });
     addPost({ post: data });
+    onClose();
   }
 
   render() {
