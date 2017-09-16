@@ -4,13 +4,16 @@ import { bindActionCreators } from 'redux';
 import { values, sortBy } from 'lodash';
 import { distanceInWordsToNow } from 'date-fns';
 
-import Card, { CardTitle } from '../primitives/Card';
-import Container from '../primitives/Container';
-
 import {
   getAuthentication,
   upvotePost,
 } from '../ducks';
+
+import Card, { CardTitle } from '../primitives/Card';
+import Container from '../primitives/Container';
+import Category from '../primitives/Category';
+import Clap from '../primitives/Clap';
+import Byline from '../primitives/Byline';
 
 const Latest = (props) => {
   const {
@@ -24,49 +27,45 @@ const Latest = (props) => {
   const sortPostsByDate = sortBy(values(posts), 'date').reverse();
 
   const postsList = sortPostsByDate.map((post, index) => {
-    const { id, title, user, image, date, votes = 0, source: { domain = '', url = ''} = {} } = post;
+    const {
+      id = 0,
+      title = 'No title',
+      user = 'Anonymous',
+      date = '',
+      votes = 0,
+      source: {
+        domain = '',
+        url = '',
+      } = {},
+    } = post;
 
     const username = (users[user] || {}).name || 'Anonymous';
 
     return (
       <Card key={index}>
-        {image && <img src={image} />}
-        <div>
-          {domain}
-        </div>
-        <CardTitle>{title}</CardTitle>
+        {/* image && <img src={image} />*/}
         <div style={{
-          top: '40%',
+          marginBottom: '.5rem',
         }}>
-          <button
-            disabled={!authenticated}
-            onClick={() => upvotePost({ id, user: loggedInUser })}
-            style={{
-              width: '40px',
-              position: 'absolute',
-              height: '40px',
-              justifyContent: 'center',
-              border: '0',
-              left: '10px',
-              top: '65px',
-              fontSize: '1.3rem',
-              cursor: 'pointer',
-              background: 'none',
-            }}
-          >
-            <div style={{
-              fontSize: '.9rem',
-            }}>
-              {values(votes).length}
-            </div>
-            👍
-          </button>
-          <p style={{
-            fontSize: '.9rem',
-            color: '#000',
-            margin: '0',
-          }}>0 comments * Posted by {username} * {distanceInWordsToNow(date)} ago</p>
+          <Category type={domain}>
+            {domain}
+          </Category>
         </div>
+        <CardTitle
+          href={url}
+          target="blank"
+        >{title}</CardTitle>
+        <Byline>
+        <Clap
+          disabled={!authenticated}
+          onClick={() => upvotePost({ id, user: loggedInUser })}
+        >
+          <span role="img" aria-label="clap">👏</span>
+        </Clap>
+          {values(votes).length} *
+          0 comments * Posted by {username}{' '}
+          * {distanceInWordsToNow(date)} ago
+        </Byline>
       </Card>
     );
   });

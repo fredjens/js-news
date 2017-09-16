@@ -7,14 +7,16 @@ import {
   getDataFromUrl,
 } from '../services/itch';
 
-import Container from '../primitives/Container';
-import Card from '../primitives/Card';
-
 import {
   addPost,
   getPostsByUserId,
   getAuthentication,
 } from '../ducks';
+
+import Container from '../primitives/Container';
+import Card from '../primitives/Card';
+import StyledInput from '../primitives/StyledInput';
+import Close from '../components/Close';
 
 class AddPost extends Component {
   constructor(props) {
@@ -64,26 +66,22 @@ class AddPost extends Component {
 
   render() {
     const { url, fetching, error } = this.state;
-    const { authenticated } = this.props;
+    const { authenticated, onClose } = this.props;
 
     const AddPost = (
       <Container>
         <Card dark>
           <h2>Add an awesome post</h2>
-          <p>About JavaScript or related topics</p>
+          <p>About JavaScript</p>
           <form onSubmit={this.submitUrl}>
-            <input
-              style={{
-                padding: '1rem',
-                width: '100%',
-                fontSize: '1.5rem',
-              }}
+            <StyledInput
               type="text"
               value={url}
               onChange={this.handleUrlInput}
               placeholder="Submit your url"
             />
           </form>
+          <Close onClick={onClose} />
         </Card>
         {fetching && (
           <Card>

@@ -31,7 +31,7 @@ export const CardTitle = glamorous.a({
   cursor: 'pointer',
 
   ':hover': {
-    boxShadow: 'inset 0 -0.14em white, inset 0 -.4em #53c3e7',
+    boxShadow: 'inset 0 -0.14em white, inset 0 -.4em #00dbde',
   },
 });
 

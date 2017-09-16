@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
-import { Link } from 'react-router-dom';
 import Submit from '../containers/Submit';
 
 import {
@@ -14,10 +13,8 @@ import {
 
 import StyledHeader, { StyledHeaderRight } from '../primitives/StyledHeader';
 import Logo from '../primitives/Logo';
-import Navigation, { NavigationLink } from '../primitives/Navigation';
 import StyledButton from '../primitives/StyledButton';
 import LoginDrawer from '../primitives/LoginDrawer';
-
 import GithubLogo from '../assets/github.png';
 
 class Header extends Component {
@@ -77,7 +74,10 @@ class Header extends Component {
     return (
       <div>
         <StyledHeader>
-          <Logo to="/">New/JS</Logo>
+          <Logo to="/">
+            <StyledButton>↓ Top</StyledButton>
+            JS
+          </Logo>
           <StyledHeaderRight>
             {authenticated && userInfo}
             <StyledButton
@@ -93,7 +93,11 @@ class Header extends Component {
           </StyledHeaderRight>
         </StyledHeader>
         {showLogin && !authenticated && login}
-        {showLogin && authenticated && <Submit />}
+        {showLogin && authenticated && (
+          <Submit
+            onClose={() => this.setState({ showLogin: false })}
+          />
+        )}
       </div>
     );
   }

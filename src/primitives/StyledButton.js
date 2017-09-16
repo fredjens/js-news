@@ -1,13 +1,13 @@
 import glamorous from 'glamorous';
 
 const Button = glamorous.button({
-  fontFamily: '"Roboto Mono", monospace',
+  fontFamily: '"Rubik", sans-serif',
   background: '#000',
   color: '#fff',
   border: '0',
   padding: '.5rem 1rem',
   fontSize: '.9rem',
-  marginRight: '1rem',
+  marginRight: '.5rem',
   cursor: 'pointer',
 }, props => props.white && ({
     background: '#fff',
