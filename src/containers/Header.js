@@ -1,102 +1,107 @@
 import React, { Component } from 'react';
-import StyledHeader from '../primitives/StyledHeader';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import autoBind from 'react-autobind';
-
-import { getAuthentication, logOutUser, getUsernameById } from '../ducks';
-
 import { Link } from 'react-router-dom';
+
+import {
+  getAuthentication,
+  signInUser,
+  logOutUser,
+  getUsernameById,
+} from '../ducks';
+
+import StyledHeader, { StyledHeaderRight } from '../primitives/StyledHeader';
+import Logo from '../primitives/Logo';
+import Navigation, { NavigationLink } from '../primitives/Navigation';
+import StyledButton from '../primitives/StyledButton';
+import LoginDrawer from '../primitives/LoginDrawer';
+
+import GithubLogo from '../assets/github.png';
 
 class Header extends Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.state = {
+      showLogin: false,
+    };
   }
 
   handleLogout = () => {
-    const { logOutUser } = this.props;
+    const { logOutUser, history} = this.props;
     logOutUser();
+    history.push('/');
+
   };
 
   handleAddStory() {
     const { history, authenticated } = this.props;
+    const { showLogin } = this.state;
 
     if (!authenticated) {
-      return history.push('login');
+      return this.setState({ showLogin: !showLogin });
     }
 
-    return history.push('submit');
+    history.push('submit');
   }
 
+  handleSignInUser() {
+    const { signInUser, history } = this.props;
+
+    signInUser();
+
+    this.setState({ showLogin: false });
+    history.push('submit');
+  };
+
   render() {
+    const { showLogin } = this.state;
     const { authenticated, user } = this.props;
 
+    const userInfo = (
+      <Link to="submit">
+        {user}
+      </Link>
+    );
+
+    const login = (
+      <LoginDrawer>
+        <h2>Hi! You need to sign in to add stories</h2>
+        <StyledButton
+          white
+          onClick={this.handleSignInUser}
+        >
+          <img src={GithubLogo} alt="Github logo" style={{ width: '30px', marginRight: '5px', verticalAlign: 'middle' }} />
+          Signup/Login with Github
+        </StyledButton>
+      </LoginDrawer>
+    );
+
     return (
-      <StyledHeader>
-        <div style={{
-          padding: '.5rem',
-        }}>
-          <Link to="/" style={{
-            fontSize: '1.5rem',
-            textDecoration: 'none',
-            height: '30px',
-            margin: '1rem 0',
-            fontWeight: '800',
-          }}>New/JS</Link>
-          <ul style={{
-            listStyle: 'none',
-            display: 'inline-block',
-            paddingLeft: '1rem',
-          }}>
-            <li style={{
-              display: 'inline-block',
-              color: 'white',
-            }}><Link to="/" style={{
-              fontSize: '1.2rem',
-              textDecoration: 'none',
-              marginRight: '1rem',
-              fontWeight: '200',
-            }}>Latest</Link></li>
-            <li style={{
-              display: 'inline-block',
-            }}><Link to="/" style={{
-              fontSize: '1.2rem',
-              textDecoration: 'none',
-              marginRight: '1rem',
-              fontWeight: '200',
-            }}>Top</Link></li>
-          </ul>
-        </div>
-        <div style={{
-          align: 'flex-end',
-          padding: '1.5rem',
-          fontSize: '.9rem',
-        }}>
-          {authenticated && (
-            <Link to="submit">
-              {user}
-            </Link>
-          )}
-          <button onClick={this.handleAddStory} style={{
-            background: '#3397d0',
-            color: '#fff',
-            border: '0',
-            padding: '.5rem 1rem',
-            fontSize: '.9rem',
-            marginLeft: '1rem',
-          }}>Add story</button>
-          {authenticated && (
-            <button style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '.9rem',
-              textDecoration: 'underline',
-              marginLeft: '1rem',
-            }} onClick={this.handleLogout}>Logout</button>
-          )}
-        </div>
-      </StyledHeader>
+      <div>
+        <StyledHeader>
+          <Logo to="/">New/JS</Logo>
+          <Navigation>
+            <NavigationLink to="/">Latest</NavigationLink>
+            <NavigationLink to="/">Top</NavigationLink>
+          </Navigation>
+          <StyledHeaderRight>
+            {authenticated && userInfo}
+            <StyledButton
+              onClick={this.handleAddStory}
+            > Add story
+            </StyledButton>
+            {authenticated && (
+              <StyledButton
+                white
+                onClick={this.handleLogout}
+              >Logout</StyledButton>
+            )}
+          </StyledHeaderRight>
+        </StyledHeader>
+        {showLogin && login}
+      </div>
     );
   }
 };
@@ -112,6 +117,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps =  (dispatch) => bindActionCreators({
   logOutUser,
+  signInUser,
 }, dispatch);
 
 export default connect(

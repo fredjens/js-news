@@ -37,7 +37,8 @@ class AddPost extends Component {
     });
   }
 
-  submitUrl() {
+  submitUrl(e) {
+    e.preventDefault();
     const { url } = this.state;
     getDataFromUrl(url);
   }
@@ -72,8 +73,19 @@ class AddPost extends Component {
       <Container>
         <Card>
           <h2>Add post</h2>
-            <input type="text" value={url} onChange={this.handleUrlInput} />
-            <button onClick={this.submitUrl}>Add post</button>
+          <form onSubmit={this.submitUrl}>
+            <input
+              style={{
+                padding: '1rem',
+                width: '100%',
+                fontSize: '1.5rem',
+              }}
+              type="text"
+              value={url}
+              onChange={this.handleUrlInput}
+              placeholder="Submit your url"
+            />
+          </form>
         </Card>
         <Card>
           {postsList}
