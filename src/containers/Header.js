@@ -17,6 +17,7 @@ import LoginDrawer from '../primitives/LoginDrawer';
 import StyledButton from '../primitives/StyledButton';
 import GithubLogo from '../assets/github.png';
 import Close from '../components/Close';
+import UserInfo from '../primitives/UserInfo';
 
 class Header extends Component {
   constructor(props) {
@@ -35,14 +36,6 @@ class Header extends Component {
   render() {
     const { showLogin } = this.state;
     const { authenticated, user, signInUser, logOutUser } = this.props;
-
-    const userInfo = (
-      <span style={{
-        marginRight: '1rem',
-      }}>
-        {user}
-      </span>
-    );
 
     const login = (
       <LoginDrawer>
@@ -69,7 +62,11 @@ class Header extends Component {
             <span style={{ marginLeft: '.5rem'}}>JS</span>
           </Logo>
           <StyledHeaderRight>
-            {authenticated && userInfo}
+            {authenticated && (
+              <UserInfo>
+                {user}
+              </UserInfo>
+            )}
             <StyledButton
               onClick={this.handleAddStory}
             > Add story

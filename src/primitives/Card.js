@@ -10,6 +10,10 @@ const Card = glamorous.div({
   ':hover': {
     background: 'rgba(255, 255, 255, 1)',
   },
+
+  '@media (max-width: 500px)': {
+    padding: '1rem',
+  },
 }, props => {
   if (props.dark) return {
     background: '#000',
@@ -37,6 +41,10 @@ export const CardTitle = glamorous.a({
 
   ':hover': {
     boxShadow: 'inset 0 -0.14em white, inset 0 -.5em #00dbde',
+  },
+
+  '@media (max-width: 500px)': {
+    fontSize: '2rem',
   },
 });
 
