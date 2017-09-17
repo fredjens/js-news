@@ -12,7 +12,6 @@ const Post = (props) => {
   const {
     post = {},
     users = {},
-    user = 'Anonymous',
     authenticated,
     upvotePost,
   } = props;
@@ -21,6 +20,7 @@ const Post = (props) => {
     id = 0,
     title = 'No title',
     date = '',
+    user = 'Anonymous',
     votes = {},
     comments = {},
     source: {
